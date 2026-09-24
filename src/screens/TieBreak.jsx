@@ -1,0 +1,2 @@
+import React from"react";import GameShell from"../components/GameShell";
+export default function TieBreak({s,win,undo}){return <GameShell><div className="duelHero"><span>⚡</span><div className="eyebrow">SUDDEN DEATH</div><h1>تساوی شکسته می‌شود.</h1><p className="lead small">مجری یک سؤال ۶۰۰ امتیازی می‌پرسد. پاسخ صحیح، بازی را تمام می‌کند.</p></div><div className="tieList">{s.tiePlayers.map(n=><button key={n} onClick={()=>win(n)}><b>{n}</b><span>پاسخ صحیح داد ←</span></button>)}</div><button className="backBtn" onClick={undo}>↶ Undo</button></GameShell>}

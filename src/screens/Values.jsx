@@ -1,0 +1,2 @@
+import React from"react";import{values}from"../data/questions";import GameShell from"../components/GameShell";
+export default function Values({cat,choose,back}){return <GameShell><button className="backBtn" onClick={back}>→ برگشت</button><span className="eyebrow">QUESTION VALUE</span><h1 className="display">{cat}</h1><p className="lead small">هرچه امتیاز بالاتر، سؤال سخت‌تر و ریسک بیشتر.</p><div className="valueGrid">{values.map((v,i)=><button key={v} onClick={()=>choose(v)}><small>LEVEL {i+1}</small><strong>{v}</strong><span>امتیاز</span></button>)}</div></GameShell>}

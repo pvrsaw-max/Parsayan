@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {fresh,addPlayer,armPower,duelResult} from '../src/engine/gameEngine.js';
+let n=0;const T=(name,cond)=>{assert.ok(cond,name);n++};
+let s=fresh();addPlayer(s,'A');addPlayer(s,'B');s.phase='board';s.powerDraft.choices.A=['شکار','بیمه'];
+T('unchosen personal power blocked',armPower(s,'دو یا هیچ')===false);
+T('chosen personal power allowed',armPower(s,'بیمه')===true);
+s.activePower=null;
+T('duel direct call blocked when not armed',duelResult(s,'A','B','du-x').ok===false);
+s.powerDraft.choices.A=['دوئل','بیمه'];T('chosen duel can arm',armPower(s,'دوئل')===true);T('armed duel resolves',duelResult(s,'A','B','du-x').ok===true);
+const app=fs.readFileSync(new URL('../src/App.jsx',import.meta.url),'utf8');
+const secret=fs.readFileSync(new URL('../src/screens/SecretPowers.jsx',import.meta.url),'utf8');
+T('knowledge judge gated behind options',app.includes('s.cat.includes("چالش")||s.optionsRevealed'));
+T('auction repaint interval stops at deadline',app.includes('Date.now()>=s.auctionDeadline')&&app.includes('clearInterval(id)'));
+T('secret picks reset between players',secret.includes('useEffect(()=>setPicked([]),[name])'));
+console.log(`BROWSER HARDENING V15 ${n}/${n}`);

@@ -1,0 +1,9 @@
+import{describe,it,expect}from"vitest";import{fresh,addPlayer,ownerResult,stealResult,commitTurn,undo,setAuction,armPower,canCoup,duelResult}from"../src/engine/gameEngine";
+const game=()=>{let s=fresh();["A","B","C","D"].forEach(n=>addPlayer(s,n));s.phase="question";s.cat="ورزش";s.value=600;s.question={id:"q"};return s};
+describe("Parsayan engine",()=>{it("normal correct",()=>{let s=game();expect(ownerResult(s,true).next).toBe("commit");expect(s.scores.A).toBe(600)});it("double",()=>{let s=game();s.activePower="دو یا هیچ";ownerResult(s,true);expect(s.scores.A).toBe(1200)});it("auction",()=>{let s=game();s.auction={player:"B",seconds:5};expect(ownerResult(s,false,1000).next).toBe("steal");stealResult(s,true);expect(s.scores.B).toBe(300)});it("undo",()=>{let s=game();ownerResult(s,true);let p=undo(s);expect(p.scores.A).toBe(0)});it("three rounds",()=>{let s=game();for(let i=0;i<12;i++)commitTurn(s);expect(s.phase).toBe("finished")});
+it("insurance",()=>{let s=game();s.activePower="بیمه";s.auction={player:"B",seconds:5};expect(ownerResult(s,false).next).toBe("commit");expect(s.scores.A).toBe(0)});
+it("hunt",()=>{let s=game();armPower(s,"شکار","B");ownerResult(s,true);expect(s.scores.A).toBe(800);expect(s.scores.B).toBe(-200)});
+it("auction guard",()=>{let s=game();expect(setAuction(s,"A",5).ok).toBe(false);expect(setAuction(s,"B",99).ok).toBe(true);expect(s.auction.seconds).toBe(15)});
+it("coup",()=>{let s=game();s.round=3;s.scores.A=100;s.scores.B=1000;expect(canCoup(s,"A")).toBe(true);armPower(s,"کودتا");ownerResult(s,true);expect(s.scores.A).toBe(1300)});
+it("duel",()=>{let s=game();armPower(s,"دوئل");duelResult(s,"A","B","du1");expect(s.scores.A).toBe(400);expect(s.scores.B).toBe(-200);expect(s.usedDuels).toContain("du1")});
+});
